@@ -13,7 +13,8 @@ from . import exceptions
 from .exceptions import TokenError
 
 config = {
-    "BLORYC_URL": "https://api.demo.spenxy.com",
+    "BLORYC_DEMO_URL": "https://api.demo.spenxy.com",
+    "BLORYC_URL": "https://api.spenxy.com",
 }
 
 
@@ -27,14 +28,13 @@ class BaseRequest(object):
         if not body:
             body = {}
 
-        full_url = config["BLORYC_URL"] + url
         if params != None:
             return cls.process_result(
-                requests.get(full_url, params=params, headers=headers, data=body)
+                requests.get(url, params=params, headers=headers, data=body)
             )
         else:
             return cls.process_result(
-                requests.post(full_url, headers=headers, data=body)
+                requests.post(url, headers=headers, data=body)
             )
 
     @classmethod
@@ -53,7 +53,12 @@ class BaseRequest(object):
 
 
 class Client(BaseRequest):
-    def __init__(self, client_id, api_key):
+    def __init__(self, client_id, api_key, demo=False):
+        if demo:
+            self._url = config["BLORYC_DEMO_URL"]
+        else:
+            self._url = config["BLORYC_URL"]
+
         self.api_key = api_key
         self.client_id = client_id
         self.access_token = None
@@ -64,6 +69,7 @@ class Client(BaseRequest):
         if not headers:
             headers = {}
         headers["Authorization"] = f"Bearer {self.access_token}"
+        url = self._url + url
         return self.send_request(url, params, headers, body)
 
     def _sign_payload(self, payload):
@@ -79,7 +85,7 @@ class Client(BaseRequest):
         }
 
     def login(self):
-        full_url = config["BLORYC_URL"] + "/api/v1/authentication/login/"
+        full_url = self._url + "/api/v1/authentication/login/"
         # TODO add timestamps for expired logins
 
         login_data = self.process_result(
@@ -103,7 +109,7 @@ class Client(BaseRequest):
             return login_data
 
     def test_token(self, token):
-        full_url = config["BLORYC_URL"] + "/api/v1/authentication/login/test-token"
+        full_url = self._url + "/api/v1/authentication/login/test-token"
         return self.process_result(
             requests.post(
                 full_url,
@@ -148,7 +154,7 @@ class Client(BaseRequest):
         # TODO: decide how to handle put requests
         # May be body + params info
         # doesn't work on 10.07.22
-        full_url = config["BLORYC_URL"] + "/api/v1/cards/card/update"
+        full_url = self._url + "/api/v1/cards/card/update"
         return self.process_result(
             requests.put(
                 full_url,
@@ -196,7 +202,7 @@ class Client(BaseRequest):
         #    "/api/v1/cards/transactions/callback",
         #    params={"callback_url": url},
         # )
-        full_url = config["BLORYC_URL"] + "/api/v1/cards/transactions/callback"
+        full_url = self._url + "/api/v1/cards/transactions/callback"
         return self.process_result(
             requests.post(
                 full_url,

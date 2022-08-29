@@ -11,7 +11,7 @@ class ClientTestSuite(unittest.TestCase):
         super(ClientTestSuite, self).setUp()
         client_id = getenv("CLIENT_ID", default=None)
         api_key = getenv("API_SECRET", default=None)
-        self.api = Client(client_id, api_key)
+        self.api = Client(client_id, api_key, demo=True)
         # to avoid test order problems
         response = self.api.login()
         self.assertIn("access_token", response)
