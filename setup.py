@@ -1,4 +1,4 @@
-from setuptools import setup
+from distutils.core import setup
 from os import path
 from codecs import open
 import sys
