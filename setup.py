@@ -4,6 +4,8 @@ from codecs import open
 import sys
 import os
 
+version = '0.1'
+
 here = path.abspath(path.dirname(__file__))
 
 with open("README.md", "r", "utf-8") as f:
@@ -15,7 +17,7 @@ if sys.argv[-1] == "publish":
 
 setup(
     name="bloryc",
-    version="0.1",
+    version=version,
     description="Bloryc SDK API",
     license="MIT",
     author="Standard Sats",
