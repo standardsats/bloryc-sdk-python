@@ -108,19 +108,6 @@ class Client(BaseRequest):
             self.access_token = login_data["access_token"]
             return login_data
 
-    def test_token(self, token):
-        full_url = self._url + "/api/v1/authentication/login/test-token"
-        return self.process_result(
-            requests.post(
-                full_url,
-                headers={
-                    "Authorization": "Bearer {}".format(token),
-                    "Content-Type": "application/json",
-                },
-                data={},
-            )
-        )
-
     def get_cardholders(self):
         return self._send_authenticated_request(
             "/api/v1/cardholder/get/all",
