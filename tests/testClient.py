@@ -121,3 +121,7 @@ class ClientTestSuite(unittest.TestCase):
     def testSetCallback(self):
         response = self.api.set_tx_callback(self.callback)
         self.assertIn("msg", response)
+
+    def testLightningInvoice(self):
+        response = self.api.crypto_lnx_invoice("100", "test", self.card)
+        #TODO: no test keys

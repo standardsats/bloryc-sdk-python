@@ -33,9 +33,7 @@ class BaseRequest(object):
                 requests.get(url, params=params, headers=headers, data=body)
             )
         else:
-            return cls.process_result(
-                requests.post(url, headers=headers, data=body)
-            )
+            return cls.process_result(requests.post(url, headers=headers, data=body))
 
     @classmethod
     def process_result(cls, result):
@@ -199,5 +197,39 @@ class Client(BaseRequest):
                     "Content-Type": "application/json",
                 },
                 data={},
+            )
+        )
+
+    def crypto_lnx_invoice(self, amount, external_id, card_id):
+        full_url = self._url + "/api/v1/crypto/lnx/invoice"
+        deposit_request = {
+            "amount": str(amount),
+            "external_id": external_id,
+            "card_id": card_id,
+        }
+        return self.process_result(
+            requests.post(
+                full_url,
+                headers={
+                    "Authorization": "Bearer {}".format(self.access_token),
+                    "Content-Type": "application/json",
+                },
+                data=json.dumps(deposit_request),
+            )
+        )
+
+    def crypto_lnx_deposit(self, preimage):
+        full_url = self._url + "/api/v1/crypto/lnx/deposit"
+        proof_data = {
+            "payment_preimage": str(preimage),
+        }
+        return self.process_result(
+            requests.post(
+                full_url,
+                headers={
+                    "Authorization": "Bearer {}".format(self.access_token),
+                    "Content-Type": "application/json",
+                },
+                data=json.dumps(proof_data),
             )
         )
