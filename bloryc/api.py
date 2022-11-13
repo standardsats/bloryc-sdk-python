@@ -47,7 +47,10 @@ class BaseRequest(object):
             raise exceptions.ServerError
         elif result.status_code == 307:
             raise exceptions.FormatError
-        return json.loads(result.text)
+        try:
+            return json.loads(result.text)
+        except:
+            return {}
 
 
 class Client(BaseRequest):
@@ -200,11 +203,11 @@ class Client(BaseRequest):
             )
         )
 
-    def crypto_lnx_invoice(self, amount, external_id, card_id):
+    def crypto_lnx_invoice(self, amount, card_id):
         full_url = self._url + "/api/v1/crypto/lnx/invoice"
         deposit_request = {
             "amount": str(amount),
-            "external_id": external_id,
+            "external_id": "1sat=1sat",
             "card_id": card_id,
         }
         return self.process_result(
